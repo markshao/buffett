@@ -10,6 +10,8 @@ python = "^3.11"
 django = "^5.1"
 loguru = "^0.7.2"
 pyyaml = "^6.0.2"
+openai = "^1.42.0"
+tushare = "^1.4.8"
 
 
 [tool.poetry.group.test.dependencies]
