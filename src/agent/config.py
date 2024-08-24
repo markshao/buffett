@@ -1,11 +1,12 @@
-from abc import ABC
 from pathlib import Path
 import yaml
+
+from .utils import Singleton
 
 ROOT_DIR = Path(__file__).parent
 
 
-class AbstractConfig(ABC):
+class AbstractConfig(metaclass=Singleton):
     CONF_DIR = ROOT_DIR / "conf"
     CONF_FILE_NAME = ""
 
