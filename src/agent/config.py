@@ -1,5 +1,6 @@
 from pathlib import Path
 import yaml
+import os
 
 from .utils import Singleton
 
@@ -25,7 +26,15 @@ class AbstractConfig(metaclass=Singleton):
         if not name in self.CONF_KEYS:
             raise AttributeError(f"conf key = {name} not support")
 
-        return self._config[name]
+        value = self._config.get(name, None)
+        if not value:
+            env_name = "%s.%s" % (self.CONF_FILE_NAME, name)
+            value = os.environ.get(env_name, None)
+
+        if value:
+            return value
+        else:
+            raise AttributeError(f"conf key = {name} not found")
 
 
 class LlmConfig(AbstractConfig):
