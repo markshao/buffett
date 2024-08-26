@@ -45,6 +45,7 @@ class StockMarket(metaclass=Singleton):
     def __init__(self) -> None:
         self._ts_config = TushareConfig()
         self._ts = ts.pro_api(self._ts_config.api_key)
+        self._ps = StockPriceStorage()
 
     def query_daily_stock_price(self, ts_code, curr_date: date):
         # validate data
