@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from re import A
-from numpy import isin
+from pandas.core.series import Series
 import tushare as ts
 
 
@@ -15,6 +15,30 @@ class TushareConfig(AbstractConfig):
 
 def date_to_tsschema(d: date):
     return d.strftime("%Y%m%d")
+
+
+class DayPrice:
+    def __init__(self, high, low, open, close) -> None:
+        self.high: float = high if high else 0.0
+        self.low: float = low if low else 0.0
+        self.open: float = open if open else 0.0
+        self.close: float = close if close else 0.0
+
+    @classmethod
+    def parse_from_data_frame(cls, ser: Series):
+        _open = float(ser.open)
+        _close = float(ser.close)
+        _high = float(ser.high)
+        _low = float(ser.low)
+        return cls(open=_open, close=_close, high=_high, low=_low)
+
+
+class StockPriceStorage:
+    def __init__(self):
+        self._stock_daily_price: dict[str, dict[date, DayPrice]] = dict()
+
+    def get_stock_price_dict(self, ts_code: str):
+        return self._stock_daily_price.get(ts_code, dict())
 
 
 class StockMarket(metaclass=Singleton):
