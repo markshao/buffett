@@ -1,3 +1,6 @@
+from datetime import datetime, date
+
+
 class Singleton(type):
     _instances = {}
 
@@ -5,3 +8,8 @@ class Singleton(type):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
+
+def str_2_date(date_str: str) -> date:
+    trade_datetime = datetime.strptime(date_str, "%Y%m%d")
+    return trade_datetime.date()
