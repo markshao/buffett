@@ -1,2 +1,10 @@
+from .agent import BuffetAgent
+
+
+def main() -> int:
+    agent = BuffetAgent()
+    agent.run_agent()
+
+
 if __name__ == "__main__":
-    pass
+    exit_code = main()
