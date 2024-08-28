@@ -1,6 +1,6 @@
 from openai import OpenAI
 from .config import LlmConfig
-from .tools import TOOLS
+from .tools import tools
 
 
 class LlmClient:
@@ -12,6 +12,6 @@ class LlmClient:
 
     def request_llm(self, messages):
         resp = self._client.chat.completions.create(
-            model="deepseek-coder", messages=messages, tools=TOOLS
+            model="deepseek-coder", messages=messages, tools=tools
         )
         return resp
