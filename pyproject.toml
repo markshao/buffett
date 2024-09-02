@@ -14,6 +14,8 @@ openai = "^1.42.0"
 tushare = "^1.4.8"
 workalendar = "^17.0.0"
 python-dotenv = "^1.0.1"
+langchain = "^0.2.15"
+langchain-openai = "^0.1.23"
 
 
 [tool.poetry.group.test.dependencies]

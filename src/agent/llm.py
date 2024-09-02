@@ -1,17 +1,16 @@
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
 from .config import LlmConfig
-from .tools import tools
 
 
-class LlmClient:
+class Llm:
     def __init__(self) -> None:
         self._config = LlmConfig()
-        self._client = OpenAI(
-            api_key=self._config.api_key, base_url=self._config.base_url
+        self._llm = ChatOpenAI(
+            model=self._config.model,
+            api_key=self._config.api_key,
+            base_url=self._config.base_url,
         )
 
-    def request_llm(self, messages):
-        resp = self._client.chat.completions.create(
-            model="deepseek-coder", messages=messages, tools=tools
-        )
-        return resp
+    def invoke_with_tools(self, messages=[], tools=[]):
+        llm_with_tools = self._llm.bind_tools(tools=tools)
+        return llm_with_tools.invoke(messages)

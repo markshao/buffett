@@ -3,8 +3,7 @@
     "python.analysis.autoImportCompletions": true,
     "python.languageServer": "Pylance",
     "python.testing.pytestArgs": [
-        "src",
-        "-s"
+        "src"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true
