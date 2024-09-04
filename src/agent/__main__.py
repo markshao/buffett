@@ -9,16 +9,18 @@ from agent.agent import BuffetAgent
 
 
 def init_logger():
+    logger.remove(handler_id=None)
     logger.add(
         sys.stdout,
         colorize=True,
-        format="<green>{time}</green> <level>{message}</level>",
+        format="<green>{time}</green> {level} <yellow>{file}</yellow> <level>{message}</level>",
     )
 
 
 def main() -> int:
-    logger.info("start buffet agent")
+    init_logger()
     agent = BuffetAgent()
+    logger.info(" agent current ctx = {}", agent.ctx.model_dump_json(by_alias=True))
     agent.run_agent()
     return 0
 

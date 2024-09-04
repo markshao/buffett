@@ -1,8 +1,10 @@
-from enum import Enum
-from typing import List
-from pydantic import BaseModel,Field
+from ast import alias
+from agent.context.context import AgentContext
+from langchain_core.messages import HumanMessage, SystemMessage
 
-SYSTEM_PROMPT = """
+
+class PromptBuilder:
+    SYSTEM_PROMPT = """
 you are an experienced stock trader, you try to maximum the profit through buying and selling stocks
 
 some constrains
@@ -13,23 +15,12 @@ some constrains
 - If you think you have nothing to do for today, just wait for the next trade date
 """
 
-class TransType(Enum):
-    THINK = "think"
-    FUNCTION_CALL = "function call"
-
-class Transaction(BaseModel):
-    type: TransType
-    log: str
-
-class TransactinoCtx(BaseModel):
-    transactions: List[Transaction]
-
-    def clear(self):
-        self.transactions.clear()
-
-class StatusPrompt(BaseModel):
-    interested_stock_list: List[str]
-    stock_account: None
-    transactions: TransactinoCtx
-
-    
+    @classmethod
+    def next_prompt_msgs(cls, ctx: AgentContext):
+        messages = []
+        messages.append(SystemMessage(content=cls.SYSTEM_PROMPT))
+        messages.append(HumanMessage(content=ctx.model_dump_json(by_alias=True)))
+        # append history llm messages
+        messages.extend(ctx.llm_logs)
+        messages.append(HumanMessage(content="what's your next thinking or action?"))
+        return messages

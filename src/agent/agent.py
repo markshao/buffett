@@ -1,19 +1,70 @@
+from loguru import logger
+from langchain_core.messages import ToolMessage
+from agent.context.context import AgentContext
+from agent.context.prompt import PromptBuilder
 from agent.llm import Llm
-
-BUFFET_SYSTEM_PROMPT = """
-You are a stock trader,you make profit through buy and sell stocks on the stock market.
-Some contrains as following
-- You have an stock account with initiate money, you can only use this money to buy stock
-- You can't sell the stock just after you buy it on same day
-- You have a interested stock list which refered from your friend Mark , you only buy the stock in this list
-- If you think you have nothing to do today , do nothing just wait for the next day
-"""
+from agent.tools.func_call.call import FunctionCallEngine
 
 
 class BuffetAgent:
     def __init__(self) -> None:
+        self._ctx = AgentContext()
+        self.__init_ctx_first_time()
+
         self._llm = Llm()
+        self._fc_engine: FunctionCallEngine = FunctionCallEngine()
+        self._fc_engine.initialize()
+
+    def __init_ctx_first_time(self):
+        from agent.tools.interest_stocks import interested_stock_list
+
+        # update 关注股票列表
+        self._ctx.stockActCtx.interested_stock_list = interested_stock_list()
+
+    @property
+    def ctx(self):
+        return self._ctx
+
+    @property
+    def llm(self) -> Llm:
+        return self._llm
+
+    @property
+    def fc_engine(self) -> FunctionCallEngine:
+        return self._fc_engine
 
     def run_agent(self):
         while True:
-            break
+            next_prompt_msgs = PromptBuilder.next_prompt_msgs(ctx=self.ctx)
+            logger.info("prompt = {}", next_prompt_msgs)
+            llm_resp = self._llm.invoke_with_tools(
+                messages=next_prompt_msgs,
+                tools=self.fc_engine.tools_definitions().dict(),
+            )
+
+            self.update_ctx(llm_resp=llm_resp)
+
+    def update_ctx(self, llm_resp):
+        if llm_resp.tool_calls:  # FIXME 这里默认就一个 tool 被调用
+            self.__update_ctx_with_funccall(llm_resp)
+        elif llm_resp.content:
+            self.__update_ctx_with_thinking(llm_resp)
+        else:
+            logger.warning("gpt dont response anything")
+
+    def __update_ctx_with_funccall(self, llm_resp):
+        tool_call = llm_resp.tool_calls[0]
+        mname = tool_call["name"]
+        args = tool_call["args"]
+        # update args
+        kwargs = {"ctx": self}
+        kwargs.update(args)
+
+        self.ctx.llm_logs.append(llm_resp)
+        ret = self.fc_engine.call_method_with_args(mname=mname, args=kwargs)
+        self.ctx.llm_logs.append(
+            ToolMessage(content=str(ret), tool_call_id=llm_resp.tool_calls[0]["id"])
+        )
+
+    def __update_ctx_with_thinking(self, thinking_content):
+        pass

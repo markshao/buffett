@@ -1,32 +1,40 @@
+from enum import Enum
 from typing import List
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+
+from langchain_core.messages import BaseMessage
+from pydantic import BaseModel, Field
 
 
-from .prompt import SYSTEM_PROMPT
-
-from ..tools.func_call.call import FunctionCallEngine
-from ..tools import StockMarket, TimeMachine
-from ..llm import Llm
+class TransType(Enum):
+    THINK = "think"
+    FUNCTION_CALL = "function call"
 
 
-class AgentContext:
-    def __init__(self, llm: Llm) -> None:
-        self._system_prompt = SYSTEM_PROMPT
+class Transaction(BaseModel):
+    type: TransType
+    log: str
 
-        self._stock_market = StockMarket()
-        self._tm = TimeMachine()
 
-        # tools
-        self._llm = llm
-        self.fc_engine = FunctionCallEngine()
+class TransactionCtx(BaseModel):
+    transactions: List[Transaction] = Field(default=[])
 
-    def initializ_ctx(self):
-        self.fc_engine.register_obj(self._stock_market)
-        self.fc_engine.register_obj(self._tm)
+    def clear(self):
+        self.transactions.clear()
 
-    def get_prompt_messages(self):
-        messages = [
-            SystemMessage(content=SYSTEM_PROMPT),
-        ]
 
-        return messages
+class StockAccountCtx(BaseModel):
+    interested_stock_list: List[str] = Field(default=[])
+    total_available_money: int = Field(default=100000)
+    stock_holding: dict = Field(default={})
+
+
+class AgentContext(BaseModel):
+    transCtx: TransactionCtx = Field(
+        default=TransactionCtx(), alias="transaction history of today"
+    )
+    stockActCtx: StockAccountCtx = Field(
+        default=StockAccountCtx(),
+        alias="personal account status and interested stock list",
+    )
+
+    llm_logs: List[BaseMessage] = Field(default=[], exclude=True)

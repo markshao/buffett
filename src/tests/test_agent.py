@@ -1,4 +1,4 @@
-from agent.context.prompt import SYSTEM_PROMPT
+from agent.context.prompt import PromptBuilder
 from agent.agent import BuffetAgent
 
 str_tools = [
@@ -20,7 +20,7 @@ str_tools = [
 def test_agent_llm():
     agent = BuffetAgent()
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": PromptBuilder.SYSTEM_PROMPT},
         {
             "role": "user",
             "content": "today is weekend , what to do",

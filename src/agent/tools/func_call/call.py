@@ -1,15 +1,18 @@
-from pprint import pformat
 from typing import Dict
-from ...utils import Singleton
-from .definition import ToolListDefinition, ToolDefinition
+
+from loguru import logger
+
+from agent.tools import StockMarket, TimeMachine
+from agent.tools.func_call.definition import ToolDefinition, ToolListDefinition
+from agent.utils import Singleton
 
 
 class FunctionCallEngine(metaclass=Singleton):
-    _DEFAULT_CALLER_OBJ = []  # 暂时不需要初始化
+    _DEFAULT_CALLER_OBJ = [StockMarket(), TimeMachine()]
 
     def __init__(self):
-        self.__func_to_obj = dict()
         self.__initialized = False
+        self.__func_to_obj = dict()
         self.__method_to_tool_def: Dict[str, ToolDefinition] = dict()
 
     def initialize(self):
@@ -33,6 +36,16 @@ class FunctionCallEngine(metaclass=Singleton):
             method = getattr(obj, m)
             assert getattr(method, "_tool_def")
             self.__method_to_tool_def[m] = getattr(method, "_tool_def")
+
+    def call_method_with_args(self, mname: str, args: dict):
+        obj = self.__func_to_obj[mname]
+        method = getattr(obj, mname)
+        ret = None
+        try:
+            ret = method(**args)
+        except Exception as e:
+            logger.error("funcation call error {}", e)
+        return ret
 
     def all_registerd_functitoins(self):
         return self.__func_to_obj.keys()

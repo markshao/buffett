@@ -1,13 +1,18 @@
+from datetime import date, datetime, timedelta
 from typing import Optional
-from datetime import datetime, timedelta, date
 
-from workalendar.asia import China
 from loguru import logger
+from workalendar.asia import China
 
-from ..config import AbstractConfig
-
-from .func_call.definition import ToolDefinition, ToolFunction, ToolParams, tool_def
-from .base import BaseTool
+from agent.context.context import AgentContext
+from agent.config import AbstractConfig
+from agent.tools.base import BaseTool
+from agent.tools.func_call.definition import (
+    ToolDefinition,
+    ToolFunction,
+    ToolParams,
+    tool_def,
+)
 
 cal = China()
 
@@ -54,7 +59,7 @@ class TimeMachine(BaseTool):
             )
         )
     )
-    def today(self) -> str:
+    def today(self, ctx) -> str:
         if self._curr_date:
             return self._curr_date.strftime("%Y-%m-%d")
         else:
@@ -72,6 +77,6 @@ class TimeMachine(BaseTool):
             )
         )
     )
-    def go_tomorrow(self):
+    def go_tomorrow(self, ctx: "AgentContext"):
         if self._curr_date:
             self._curr_date = next_working_day(self._curr_date)
