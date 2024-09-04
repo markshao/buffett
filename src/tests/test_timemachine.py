@@ -1,6 +1,6 @@
 import pytest
 
-from src.agent.tools.timemachine import TimeMachine
+from agent.tools.timemachine import TimeMachine
 
 
 def test_current_date():

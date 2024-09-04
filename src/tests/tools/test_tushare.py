@@ -1,8 +1,7 @@
-from re import A
 import pytest
 from datetime import datetime, timedelta
 
-from src.agent.tools.stmarket import TushareConfig, StockMarket, DayPrice
+from agent.tools.stmarket import TushareConfig, StockMarket, DayPrice
 
 
 def test_tushareconfig():

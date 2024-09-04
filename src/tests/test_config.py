@@ -1,6 +1,6 @@
 import pytest
 import os
-from src.agent.config import LlmConfig
+from agent.config import LlmConfig
 
 
 def test_llm_config():

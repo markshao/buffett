@@ -1,5 +1,5 @@
 from langchain_openai import ChatOpenAI
-from .config import LlmConfig
+from agent.config import LlmConfig
 
 
 class Llm:

@@ -7,5 +7,6 @@
         "-s"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "black-formatter.cwd": "${workspaceFolder}/src"
 }

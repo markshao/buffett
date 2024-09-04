@@ -2,7 +2,7 @@ from pathlib import Path
 import yaml
 import os
 
-from .utils import Singleton
+from agent.utils import Singleton
 
 ROOT_DIR = Path(__file__).parent
 

@@ -1,0 +1,39 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "query_daily_stock_price",
+      "description": "query the daily stock price by ts_code and date of today",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ts_code": {
+            "type": "string",
+            "description": "the code of stock, pick it from interested list"
+          },
+          "curr_date": {
+            "type": "string",
+            "description": "the date of today , in format 2024-1-1"
+          }
+        },
+        "required": ["ts_code", "curr_date"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "go_tomorrow",
+      "description": "wait for the next trade day",
+      "parameters": { "type": "object", "properties": {}, "required": [] }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "today",
+      "description": "get the date of today",
+      "parameters": { "type": "object", "properties": {}, "required": [] }
+    }
+  }
+]

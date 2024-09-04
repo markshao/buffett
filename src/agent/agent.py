@@ -1,5 +1,4 @@
-from dotenv import load_dotenv
-from .llm import Llm
+from agent.llm import Llm
 
 BUFFET_SYSTEM_PROMPT = """
 You are a stock trader,you make profit through buy and sell stocks on the stock market.
@@ -18,6 +17,3 @@ class BuffetAgent:
     def run_agent(self):
         while True:
             break
-
-
-load_dotenv()

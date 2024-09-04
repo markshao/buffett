@@ -1,11 +1,14 @@
 from datetime import date, datetime
+from re import A
 from pandas.core.series import Series
 import tushare as ts
 
 from loguru import logger
 
-from ..utils import Singleton, str_2_date
+from ..utils import str_2_date
 from ..config import AbstractConfig
+from .func_call.definition import ToolDefinition, ToolFunction, ToolParams, tool_def
+from .base import BaseTool
 
 
 class TushareConfig(AbstractConfig):
@@ -56,12 +59,33 @@ class StockPriceStorage:
         self._stock_daily_price[ts_code] = dict()
 
 
-class StockMarket(metaclass=Singleton):
+class StockMarket(BaseTool):
     def __init__(self) -> None:
         self._ts_config = TushareConfig()
         self._ts = ts.pro_api(self._ts_config.api_key)
         self._ps = StockPriceStorage()
 
+    @tool_def(
+        ToolDefinition(
+            function=ToolFunction(
+                name="query_daily_stock_price",
+                description="query the daily stock price by ts_code and date of today",
+                parameters=ToolParams(
+                    properties={
+                        "ts_code": {
+                            "type": "string",
+                            "description": "the code of stock, pick it from interested list",
+                        },
+                        "curr_date": {
+                            "type": "string",
+                            "description": "the date of today , in format 2024-1-1",
+                        },
+                    },
+                    required=["ts_code", "curr_date"],
+                ),
+            )
+        )
+    )
     def query_daily_stock_price(self, ts_code, curr_date: date) -> DayPrice:
         # validate data
         assert isinstance(curr_date, date)

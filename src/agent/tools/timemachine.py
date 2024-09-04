@@ -4,8 +4,10 @@ from datetime import datetime, timedelta, date
 from workalendar.asia import China
 from loguru import logger
 
-from ..utils import Singleton
 from ..config import AbstractConfig
+
+from .func_call.definition import ToolDefinition, ToolFunction, ToolParams, tool_def
+from .base import BaseTool
 
 cal = China()
 
@@ -26,7 +28,7 @@ class TimeMachineConfig(AbstractConfig):
     CONF_KEYS = ("fallback_days",)
 
 
-class TimeMachine(metaclass=Singleton):
+class TimeMachine(BaseTool):
     def __init__(self) -> None:
         self._config: AbstractConfig = TimeMachineConfig()
         self._curr_date: Optional[date] = None
@@ -40,12 +42,36 @@ class TimeMachine(metaclass=Singleton):
             logger.info("curr date is not working day , time through")
             self._curr_date = next_working_day(self._curr_date)
 
+    @tool_def(
+        ToolDefinition(
+            function=ToolFunction(
+                name="today",
+                description="get the date of today",
+                parameters=ToolParams(
+                    properties={},
+                    required=[],
+                ),
+            )
+        )
+    )
     def today(self) -> str:
         if self._curr_date:
             return self._curr_date.strftime("%Y-%m-%d")
         else:
             raise AttributeError(f"self._curr_date is None")
 
+    @tool_def(
+        ToolDefinition(
+            function=ToolFunction(
+                name="go_tomorrow",
+                description="wait for the next trade day",
+                parameters=ToolParams(
+                    properties={},
+                    required=[],
+                ),
+            )
+        )
+    )
     def go_tomorrow(self):
         if self._curr_date:
             self._curr_date = next_working_day(self._curr_date)
