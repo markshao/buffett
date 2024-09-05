@@ -1,10 +1,10 @@
 from datetime import date, datetime
-from re import A
 
 import tushare as ts
 from pandas.core.series import Series
 
 from agent.config import AbstractConfig
+from agent.context.context import AgentContext
 from agent.tools.base import BaseTool
 from agent.tools.func_call.definition import (
     ToolDefinition,
@@ -80,7 +80,7 @@ class StockMarket(BaseTool):
                             "type": "string",
                             "description": "the code of stock, pick it from interested list",
                         },
-                        "curr_date": {
+                        "curr_date_str": {
                             "type": "string",
                             "description": "the date of today , in format 2024-1-1",
                         },
@@ -90,10 +90,11 @@ class StockMarket(BaseTool):
             )
         )
     )
-    def query_daily_stock_price(self, ts_code, curr_date: date) -> DayPrice:
+    def query_daily_stock_price(
+        self, ts_code, curr_date_str: str, ctx: AgentContext
+    ) -> DayPrice:
         # validate data
-        assert isinstance(curr_date, date)
-
+        curr_date = str_2_date(curr_date_str)
         stock_price_dict = self._ps.get_stock_price_dict(ts_code)
 
         if stock_price_dict:
@@ -119,3 +120,81 @@ class StockMarket(BaseTool):
             )
 
         return stock_price_dict[curr_date]
+
+    @tool_def(
+        ToolDefinition(
+            function=ToolFunction(
+                name="buy_stock",
+                description="bid the price and volume for the target stock",
+                parameters=ToolParams(
+                    properties={
+                        "ts_code": {
+                            "type": "string",
+                            "description": "the code of stock which you want to bid",
+                        },
+                        "price": {
+                            "type": "number",
+                            "description": "bid price for the stock, in format 10.00",
+                        },
+                        "volume": {
+                            "type": "integer",
+                            "description": "volume of the stock you want to buy , should using integer",
+                        },
+                    },
+                    required=["ts_code", "price", "volume"],
+                ),
+            )
+        )
+    )
+    def buy_stock(self, ts_code, price, volume, ctx: AgentContext) -> str:
+        # FIXME 这里没校验价格啥的, 另外如果持续购买也有bug
+        _price = float(price)
+        _volume = int(volume)
+        _total_expense = float(_price * _volume)
+        if _total_expense > ctx.stockActCtx.total_available_money:
+            return "Fail to make the deal, you dont have enough money"
+        # update ctx
+        ctx.stockActCtx.total_available_money = (
+            ctx.stockActCtx.total_available_money - _total_expense
+        )
+        ctx.stockActCtx.stock_holding[ts_code] = {"price":_price,"volume":_volume}
+        return "Successfully make the deal"
+
+    @tool_def(
+        ToolDefinition(
+            function=ToolFunction(
+                name="sell_stock",
+                description="bid the price and volume for the target stock",
+                parameters=ToolParams(
+                    properties={
+                        "ts_code": {
+                            "type": "string",
+                            "description": "the code of stock which you want to bid",
+                        },
+                        "price": {
+                            "type": "number",
+                            "description": "the price you want to sell the stock, in format 10.00",
+                        },
+                        "volume": {
+                            "type": "integer",
+                            "description": "the volume you want to sell, should using integer and should less than the amount you hold",
+                        },
+                    },
+                    required=["ts_code", "price", "volume"],
+                ),
+            )
+        )
+    )
+    def sell_stock(self, ts_code, price, volume, ctx: AgentContext) -> str:
+        # FIXME 这里没校验价格啥的
+        _price = float(price)
+        _volume = int(volume)
+        _total_revenue = float(_price * _volume)
+        if _volume > ctx.stockActCtx.stock_holding[ts_code]["volume"]:
+            return "Fail to make the deal, you dont have enough stock"
+        # update ctx
+        ctx.stockActCtx.total_available_money = (
+            ctx.stockActCtx.total_available_money + _total_revenue
+        )
+        ctx.stockActCtx.stock_holding[ts_code]["volume"] = ctx.stockActCtx.stock_holding[ts_code]["volume"]  - _volume
+        return "Successfully make the deal"

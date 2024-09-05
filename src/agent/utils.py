@@ -11,5 +11,15 @@ class Singleton(type):
 
 
 def str_2_date(date_str: str) -> date:
-    trade_datetime = datetime.strptime(date_str, "%Y%m%d")
-    return trade_datetime.date()
+    exec = []
+    for pattern in ["%Y-%m-%d", "%Y%m%d"]:
+        try:
+            trade_datetime = datetime.strptime(date_str, pattern)
+            return trade_datetime
+        except Exception as e:
+            exec.append(e)
+    raise exec[0]
+
+
+def date_2_str(date_obj: date) -> str:
+    return date_obj.strftime("%Y-%m-%d")

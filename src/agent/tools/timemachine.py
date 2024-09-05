@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from typing import Optional
-
+import time
 from loguru import logger
 from workalendar.asia import China
 
@@ -13,6 +13,7 @@ from agent.tools.func_call.definition import (
     ToolParams,
     tool_def,
 )
+from agent.utils import date_2_str
 
 cal = China()
 
@@ -39,6 +40,9 @@ class TimeMachine(BaseTool):
         self._curr_date: Optional[date] = None
 
         self.__set_curr_date()
+
+        # go_tomorrow_count
+        self._count = 1
 
     def __set_curr_date(self):
         now_date = datetime.now().date()
@@ -80,3 +84,17 @@ class TimeMachine(BaseTool):
     def go_tomorrow(self, ctx: "AgentContext"):
         if self._curr_date:
             self._curr_date = next_working_day(self._curr_date)
+
+            # fix me later, dont constant sleep
+            time.sleep(10)
+            # 保留最后一个 Message，这个是上次的 Response
+            if self._count % 14 == 0:
+                ctx.llm_logs = ctx.llm_logs[-1:]
+                logger.info("clean history")
+                self._count = 1
+            else:
+                self._count += 1
+
+            return f"时光飞逝，现在是下个交易日了 {date_2_str(self._curr_date)}"
+        else:
+            logger.error("self._curr_date is None , fail to wait for next day")

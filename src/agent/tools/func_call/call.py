@@ -45,6 +45,7 @@ class FunctionCallEngine(metaclass=Singleton):
             ret = method(**args)
         except Exception as e:
             logger.error("funcation call error {}", e)
+            return f"fail to call the function {e}"
         return ret
 
     def all_registerd_functitoins(self):

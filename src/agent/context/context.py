@@ -24,7 +24,7 @@ class TransactionCtx(BaseModel):
 
 class StockAccountCtx(BaseModel):
     interested_stock_list: List[str] = Field(default=[])
-    total_available_money: int = Field(default=100000)
+    total_available_money: float = Field(default=100000.0)
     stock_holding: dict = Field(default={})
 
 

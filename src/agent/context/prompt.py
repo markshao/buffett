@@ -12,7 +12,7 @@ some constrains
 - The Stock Market support T+1 trade model
 - You have an interested stock list, each time you can pick up one of them , to decide whether to buy / sell / analyze it 
 - You can make many transactions per-day
-- If you think you have nothing to do for today, just wait for the next trade date
+- You are in a virtual world , if you think you have nothing to do for today or the price of the stock dont change , dont forget call the function let the time pass to next trade date
 """
 
     @classmethod

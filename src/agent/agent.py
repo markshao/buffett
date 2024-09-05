@@ -36,7 +36,7 @@ class BuffetAgent:
     def run_agent(self):
         while True:
             next_prompt_msgs = PromptBuilder.next_prompt_msgs(ctx=self.ctx)
-            logger.info("prompt = {}", next_prompt_msgs)
+            logger.info("当前持股状态 = {}", self.ctx.stockActCtx.stock_holding)
             llm_resp = self._llm.invoke_with_tools(
                 messages=next_prompt_msgs,
                 tools=self.fc_engine.tools_definitions().dict(),
@@ -53,18 +53,20 @@ class BuffetAgent:
             logger.warning("gpt dont response anything")
 
     def __update_ctx_with_funccall(self, llm_resp):
-        tool_call = llm_resp.tool_calls[0]
-        mname = tool_call["name"]
-        args = tool_call["args"]
-        # update args
-        kwargs = {"ctx": self}
-        kwargs.update(args)
-
         self.ctx.llm_logs.append(llm_resp)
-        ret = self.fc_engine.call_method_with_args(mname=mname, args=kwargs)
-        self.ctx.llm_logs.append(
-            ToolMessage(content=str(ret), tool_call_id=llm_resp.tool_calls[0]["id"])
-        )
+        for tool_call in llm_resp.tool_calls:
+            mname = tool_call["name"]
+            args = tool_call["args"]
+            # update args
+            kwargs = {"ctx": self.ctx}
+            kwargs.update(args)
 
-    def __update_ctx_with_thinking(self, thinking_content):
-        pass
+            ret = self.fc_engine.call_method_with_args(mname=mname, args=kwargs)
+            logger.info("method={},result={}", mname, ret)
+            self.ctx.llm_logs.append(
+                ToolMessage(content=str(ret), tool_call_id=tool_call["id"])
+            )
+
+    def __update_ctx_with_thinking(self, llm_resp):
+        logger.info(llm_resp.content)
+        self.ctx.llm_logs.append(llm_resp)

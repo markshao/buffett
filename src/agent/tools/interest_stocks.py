@@ -1,2 +1,2 @@
 def interested_stock_list():
-    return ["000001.SZ"]
+    return ["603298.SH", "600031.SH"]
