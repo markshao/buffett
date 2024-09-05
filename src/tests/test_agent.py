@@ -27,5 +27,5 @@ def test_agent_llm():
         },
     ]
 
-    resp = agent._llm.invoke_with_tools(messages=messages, tools=str_tools)
+    resp = agent.llm.invoke_with_tools(messages=messages, tools=str_tools)
     print(1)

@@ -1,6 +1,7 @@
 import pytest
 
 from agent.tools.timemachine import TimeMachine
+from agent.context.context import AgentContext
 
 
 def test_current_date():
@@ -9,7 +10,8 @@ def test_current_date():
 
 
 def test_tomorrow():
+    ctx = AgentContext()
     tc = TimeMachine()
-    print(tc.today())
-    tc.go_tomorrow()
-    print(tc.today())
+    print(tc.today(ctx))
+    tc.go_tomorrow(ctx)
+    print(tc.today(ctx))
