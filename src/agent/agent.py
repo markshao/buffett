@@ -68,5 +68,6 @@ class BuffetAgent:
             )
 
     def __update_ctx_with_thinking(self, llm_resp):
+        self.ctx.llm_logs.append(llm_resp)
         logger.info(llm_resp.content)
         self.ctx.llm_logs.append(llm_resp)

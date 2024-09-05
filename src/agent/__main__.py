@@ -20,7 +20,7 @@ def init_logger():
 def main() -> int:
     init_logger()
     agent = BuffetAgent()
-    logger.info(" agent current ctx = {}", agent.ctx.model_dump_json(by_alias=True))
+    logger.info("巴菲特来我大A赚钱了")
     agent.run_agent()
     return 0
 
