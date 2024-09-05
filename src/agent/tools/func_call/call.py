@@ -40,13 +40,12 @@ class FunctionCallEngine(metaclass=Singleton):
     def call_method_with_args(self, mname: str, args: dict):
         obj = self.__func_to_obj[mname]
         method = getattr(obj, mname)
-        ret = None
         try:
             ret = method(**args)
+            return ret
         except Exception as e:
-            logger.error("funcation call error {}", e)
-            return f"fail to call the function {e}"
-        return ret
+            logger.error("funcation call with error: {}", e)
+            return f"funcation call with error:{e}"
 
     def all_registerd_functitoins(self):
         return self.__func_to_obj.keys()
