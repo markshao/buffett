@@ -72,7 +72,7 @@ class TimeMachine(BaseTool):
     @tool_def(
         ToolDefinition(
             function=ToolFunction(
-                name="go_tomorrow",
+                name="next_trading_day",
                 description="wait for the next trade day",
                 parameters=ToolParams(
                     properties={},
@@ -81,7 +81,7 @@ class TimeMachine(BaseTool):
             )
         )
     )
-    def go_tomorrow(self, ctx: "AgentContext"):
+    def next_trading_day(self, ctx: "AgentContext"):
         if self._curr_date:
             self._curr_date = next_working_day(self._curr_date)
 
