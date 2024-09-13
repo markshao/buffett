@@ -80,7 +80,7 @@ class StockMarket(BaseTool):
                             "type": "string",
                             "description": "the code of stock, pick it from interested list",
                         },
-                        "curr_date_str": {
+                        "curr_date": {
                             "type": "string",
                             "description": "the date of today , in format 2024-1-1",
                         },
@@ -91,15 +91,15 @@ class StockMarket(BaseTool):
         )
     )
     def query_daily_stock_price(
-        self, ts_code, curr_date_str: str, ctx: AgentContext
+        self, ts_code, curr_date: str, ctx: AgentContext
     ) -> DayPrice:
         # validate data
-        curr_date = str_2_date(curr_date_str)
+        dcurr_date = str_2_date(curr_date)
         stock_price_dict = self._ps.get_stock_price_dict(ts_code)
 
         if stock_price_dict:
             if curr_date in stock_price_dict:
-                return stock_price_dict[curr_date]
+                return stock_price_dict[dcurr_date]
         else:
             self._ps.init_stock_price_dict(ts_code)
             stock_price_dict = self._ps.get_stock_price_dict(ts_code)
@@ -108,7 +108,7 @@ class StockMarket(BaseTool):
         end_date = datetime.now().date()
         df = self._ts.daily(
             ts_code=ts_code,
-            start_date=date_to_tsschema(curr_date),
+            start_date=date_to_tsschema(dcurr_date),
             end_date=date_to_tsschema(end_date),
         )
 
@@ -119,7 +119,7 @@ class StockMarket(BaseTool):
                 DayPrice.parse_from_data_frame(ser)
             )
 
-        return stock_price_dict[curr_date]
+        return stock_price_dict[dcurr_date]
 
     @tool_def(
         ToolDefinition(
@@ -197,4 +197,6 @@ class StockMarket(BaseTool):
             ctx.stockActCtx.total_available_money + _total_revenue
         )
         ctx.stockActCtx.stock_holding[ts_code]["volume"] = ctx.stockActCtx.stock_holding[ts_code]["volume"]  - _volume
+        if ctx.stockActCtx.stock_holding[ts_code]["volume"] == 0:
+            del ctx.stockActCtx.stock_holding[ts_code]
         return "Successfully make the deal"

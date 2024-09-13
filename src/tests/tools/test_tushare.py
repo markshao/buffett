@@ -22,14 +22,14 @@ class TestStMarket:
         ts_code = "000001.SZ"
         curr_date = datetime.now().date() - timedelta(days=10)
         dp = stm.query_daily_stock_price(
-            ts_code=ts_code, curr_date_str=date_2_str(curr_date), ctx=AgentContext()
+            ts_code=ts_code, curr_date=date_2_str(curr_date), ctx=AgentContext()
         )
         assert isinstance(dp, DayPrice)
         print("\n")
         print(dp)
         curr_date = curr_date + timedelta(days=7)
         dp = stm.query_daily_stock_price(
-            ts_code=ts_code, curr_date_str=date_2_str(curr_date), ctx=AgentContext()
+            ts_code=ts_code, curr_date=date_2_str(curr_date), ctx=AgentContext()
         )
         assert isinstance(dp, DayPrice)
         print(dp)
