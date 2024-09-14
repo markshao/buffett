@@ -35,7 +35,7 @@ class BuffetAgent:
 
     def run_agent(self):
         while True:
-            next_prompt_msgs = PromptBuilder.next_prompt_msgs(ctx=self.ctx)
+            next_prompt_msgs = PromptBuilder.next_prompt_msgs_v2(ctx=self.ctx)
             logger.info("当前持股状态 = {}", self.ctx.stockActCtx.stock_holding)
             llm_resp = self._llm.invoke_with_tools(
                 messages=next_prompt_msgs,
