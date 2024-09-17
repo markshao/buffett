@@ -17,6 +17,12 @@ def stm(request) -> StockMarket:
     return StockMarket()
 
 
+### Error due to the api not existed
+# def test_realtime_snapshot(stm: StockMarket):
+#     df = stm.ts_api.realtime_tick(ts_code="600000.SH")
+#     print(df[0])
+
+
 class TestStMarket:
     def test_query_stock_price(self, stm: StockMarket):
         ts_code = "000001.SZ"

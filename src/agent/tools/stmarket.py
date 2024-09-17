@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 import tushare as ts
+from tushare.pro.client import DataApi
 from pandas.core.series import Series
 
 from agent.config import AbstractConfig
@@ -68,6 +69,10 @@ class StockMarket(BaseTool):
         self._ts_config = TushareConfig()
         self._ts = ts.pro_api(self._ts_config.api_key)
         self._ps = StockPriceStorage()
+
+    @property
+    def ts_api(self) -> DataApi:
+        return self._ts
 
     @tool_def(
         ToolDefinition(
@@ -157,7 +162,7 @@ class StockMarket(BaseTool):
         ctx.stockActCtx.total_available_money = (
             ctx.stockActCtx.total_available_money - _total_expense
         )
-        ctx.stockActCtx.stock_holding[ts_code] = {"price":_price,"volume":_volume}
+        ctx.stockActCtx.stock_holding[ts_code] = {"price": _price, "volume": _volume}
         return "Successfully make the deal"
 
     @tool_def(
@@ -196,7 +201,9 @@ class StockMarket(BaseTool):
         ctx.stockActCtx.total_available_money = (
             ctx.stockActCtx.total_available_money + _total_revenue
         )
-        ctx.stockActCtx.stock_holding[ts_code]["volume"] = ctx.stockActCtx.stock_holding[ts_code]["volume"]  - _volume
+        ctx.stockActCtx.stock_holding[ts_code]["volume"] = (
+            ctx.stockActCtx.stock_holding[ts_code]["volume"] - _volume
+        )
         if ctx.stockActCtx.stock_holding[ts_code]["volume"] == 0:
             del ctx.stockActCtx.stock_holding[ts_code]
         return "Successfully make the deal"
