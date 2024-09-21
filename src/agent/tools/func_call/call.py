@@ -1,6 +1,7 @@
 from typing import Dict
-from omegaconf import DictConfig
+
 from loguru import logger
+from omegaconf import DictConfig
 
 from agent.tools import StockMarket, TimeMachine
 from agent.tools.func_call.definition import ToolDefinition, ToolListDefinition

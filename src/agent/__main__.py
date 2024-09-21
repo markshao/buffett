@@ -1,8 +1,5 @@
-from dotenv import load_dotenv
 import hydra
 from omegaconf import DictConfig
-
-load_dotenv()
 
 import sys
 from loguru import logger
