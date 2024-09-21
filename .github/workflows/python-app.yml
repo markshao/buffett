@@ -38,4 +38,4 @@ jobs:
     - name: Test with pytest
       run: |
         cd src/
-        poetry run pytest tests -s
+        poetry run python -m pytest tests/ -s
