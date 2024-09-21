@@ -3,8 +3,8 @@ from agent.tools.func_call.call import FunctionCallEngine
 
 
 @pytest.fixture
-def fce(request) -> FunctionCallEngine:
-    _fce = FunctionCallEngine()
+def fce(request, cfg) -> FunctionCallEngine:
+    _fce = FunctionCallEngine(cfg)
     _fce.initialize()
     return _fce
 

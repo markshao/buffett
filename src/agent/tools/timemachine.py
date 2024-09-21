@@ -5,7 +5,6 @@ from loguru import logger
 from workalendar.asia import China
 
 from agent.context.context import AgentContext
-from agent.config import AbstractConfig
 from agent.tools.base import BaseTool
 from agent.tools.func_call.definition import (
     ToolDefinition,
@@ -29,14 +28,9 @@ def next_working_day(curr_date: date) -> date:
     return next_date
 
 
-class TimeMachineConfig(AbstractConfig):
-    CONF_FILE_NAME = "timemachine.yaml"
-    CONF_KEYS = ("fallback_days",)
-
-
 class TimeMachine(BaseTool):
-    def __init__(self) -> None:
-        self._config: AbstractConfig = TimeMachineConfig()
+    def __init__(self, config) -> None:
+        self._config = config
         self._curr_date: Optional[date] = None
 
         self.__set_curr_date()
@@ -95,6 +89,6 @@ class TimeMachine(BaseTool):
             else:
                 self._count += 1
 
-            return f"时光飞逝，现在是下个交易日了 {date_2_str(self._curr_date)}"
+            return f"time passed away, now its the next trading date {date_2_str(self._curr_date)}"
         else:
             logger.error("self._curr_date is None , fail to wait for next day")

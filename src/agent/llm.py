@@ -1,11 +1,11 @@
-from ratelimit import limits,sleep_and_retry
+from omegaconf import DictConfig
+from ratelimit import limits, sleep_and_retry
 from langchain_openai import ChatOpenAI
-from agent.config import LlmConfig
 
 
 class Llm:
-    def __init__(self) -> None:
-        self._config = LlmConfig()
+    def __init__(self, config: DictConfig) -> None:
+        self._config = config
         self._llm = ChatOpenAI(
             model=self._config.model,
             api_key=self._config.api_key,

@@ -2,19 +2,13 @@ import pytest
 from datetime import datetime, timedelta
 
 from agent.context.context import AgentContext
-from agent.tools.stmarket import TushareConfig, StockMarket, DayPrice
+from agent.tools.stmarket import StockMarket, DayPrice
 from agent.utils import date_2_str
 
 
-def test_tushareconfig():
-    tu_config = TushareConfig()
-    print(tu_config.api_key)
-    assert tu_config.api_key
-
-
 @pytest.fixture
-def stm(request) -> StockMarket:
-    return StockMarket()
+def stm(request, cfg) -> StockMarket:
+    return StockMarket(cfg.tushare)
 
 
 ### Error due to the api not existed

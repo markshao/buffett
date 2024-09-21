@@ -23,8 +23,8 @@ str_tools = [
 ]
 
 
-def test_agent_llm():
-    agent = BuffetAgent()
+def test_agent_llm(cfg):
+    agent = BuffetAgent(cfg)
     messages = [
         {"role": "system", "content": PromptBuilder.SYSTEM_PROMPT},
         {

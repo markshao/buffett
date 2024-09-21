@@ -1,10 +1,10 @@
 from datetime import date, datetime
 
+from omegaconf import DictConfig
 import tushare as ts
 from tushare.pro.client import DataApi
 from pandas.core.series import Series
 
-from agent.config import AbstractConfig
 from agent.context.context import AgentContext
 from agent.tools.base import BaseTool
 from agent.tools.func_call.definition import (
@@ -14,11 +14,6 @@ from agent.tools.func_call.definition import (
     tool_def,
 )
 from agent.utils import str_2_date
-
-
-class TushareConfig(AbstractConfig):
-    CONF_FILE_NAME = "tushare.yaml"
-    CONF_KEYS = ("api_key",)
 
 
 def date_to_tsschema(d: date):
@@ -65,8 +60,8 @@ class StockPriceStorage:
 
 
 class StockMarket(BaseTool):
-    def __init__(self) -> None:
-        self._ts_config = TushareConfig()
+    def __init__(self, config: DictConfig) -> None:
+        self._ts_config = config
         self._ts = ts.pro_api(self._ts_config.api_key)
         self._ps = StockPriceStorage()
 

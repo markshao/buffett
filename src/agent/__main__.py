@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+import hydra
+from omegaconf import DictConfig
 
 load_dotenv()
 
@@ -17,9 +19,10 @@ def init_logger():
     )
 
 
-def main() -> int:
+@hydra.main(version_base=None, config_path="conf", config_name="buffet")
+def main(cfg: DictConfig) -> int:
     init_logger()
-    agent = BuffetAgent()
+    agent = BuffetAgent(cfg)
     logger.info("巴菲特来我大A赚钱了")
     agent.run_agent()
     return 0

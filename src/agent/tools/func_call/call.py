@@ -1,5 +1,5 @@
 from typing import Dict
-
+from omegaconf import DictConfig
 from loguru import logger
 
 from agent.tools import StockMarket, TimeMachine
@@ -8,18 +8,21 @@ from agent.utils import Singleton
 
 
 class FunctionCallEngine(metaclass=Singleton):
-    _DEFAULT_CALLER_OBJ = [StockMarket(), TimeMachine()]
 
-    def __init__(self):
+    def __init__(self, config: DictConfig):
         self.__initialized = False
         self.__func_to_obj = dict()
         self.__method_to_tool_def: Dict[str, ToolDefinition] = dict()
+        self._DEFAULT_CALLER_OBJ = [
+            StockMarket(config.tushare),
+            TimeMachine(config.timemachine),
+        ]
 
     def initialize(self):
         if self.__initialized:
             return
 
-        for obj in self.__class__._DEFAULT_CALLER_OBJ:
+        for obj in self._DEFAULT_CALLER_OBJ:
             self.register_obj(obj)
         self._initialized = True
 
@@ -52,7 +55,3 @@ class FunctionCallEngine(metaclass=Singleton):
 
     def tools_definitions(self) -> ToolListDefinition:
         return ToolListDefinition(list(self.__method_to_tool_def.values()))
-
-
-# ignore just for testing?
-__fc_engine = FunctionCallEngine()
