@@ -2,11 +2,13 @@
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.autoImportCompletions": true,
     "python.languageServer": "Pylance",
-    "python.testing.pytestArgs": [
-        "src",
-        "-s"
-    ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "black-formatter.cwd": "${workspaceFolder}/src"
+    "black-formatter.cwd": "${workspaceFolder}/src",
+    "python.testing.pytestArgs": [
+        "src",
+        "-s",
+        "--llm_api_key=sk-pAPHzvoiyqg5cjEpMSU21jArBFY8SggDlxKEHC1ClLmS7bqp",
+        "--tushare_api_key=3b80c967b568037ac4b2363577d77844b0de4425a26e0d06d40982f5"
+    ]
 }

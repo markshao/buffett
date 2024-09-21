@@ -1,4 +1,5 @@
 from loguru import logger
+from omegaconf import DictConfig
 from langchain_core.messages import ToolMessage
 from agent.context.context import AgentContext
 from agent.context.prompt import PromptBuilder
@@ -7,18 +8,19 @@ from agent.tools.func_call.call import FunctionCallEngine
 
 
 class BuffetAgent:
-    def __init__(self) -> None:
+    def __init__(self, config: DictConfig) -> None:
+        self._config = config
         self._ctx = AgentContext()
         self.__init_ctx_first_time()
 
-        self._llm = Llm()
-        self._fc_engine: FunctionCallEngine = FunctionCallEngine()
+        self._llm = Llm(config.llm_config)
+        self._fc_engine: FunctionCallEngine = FunctionCallEngine(self._config)
         self._fc_engine.initialize()
 
     def __init_ctx_first_time(self):
         from agent.tools.interest_stocks import interested_stock_list
 
-        # update 关注股票列表
+        # update interested stock
         self._ctx.stockActCtx.interested_stock_list = interested_stock_list()
 
     @property
