@@ -1,0 +1,12 @@
+llm_config:
+  base_url: https://api.moonshot.cn/v1
+  model: moonshot-v1-8k
+  api_key: null
+
+timemachine:
+  fallback_days: 330
+
+tushare:
+  api_key: 3b80c967b568037ac4b2363577d77844b0de4425a26e0d06d40982f5
+
+  
