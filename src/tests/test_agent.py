@@ -1,3 +1,4 @@
+import pytest
 from dotenv import load_dotenv
 import os
 
@@ -22,7 +23,7 @@ str_tools = [
     },
 ]
 
-
+@pytest.mark.skip(reason="need apikey")
 def test_agent_llm(cfg):
     agent = BuffetAgent(cfg)
     messages = [
