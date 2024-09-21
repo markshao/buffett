@@ -16,7 +16,7 @@ def stm(request, cfg) -> StockMarket:
 #     df = stm.ts_api.realtime_tick(ts_code="600000.SH")
 #     print(df[0])
 
-
+@pytest.mark.skip("need tushare apikey")
 class TestStMarket:
     def test_query_stock_price(self, stm: StockMarket):
         ts_code = "000001.SZ"
